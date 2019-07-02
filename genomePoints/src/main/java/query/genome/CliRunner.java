@@ -15,7 +15,7 @@ public class CliRunner implements Runnable {
 		names = { "--data-dir" },
 		required = false,
 		description = "Directory where organized genomic is stored/to be stored")
-	private String dataDirectory;
+	private String dataDirectory = "data";
 	
 	@Option(
 		names = { "-q", "--query" },
@@ -23,10 +23,23 @@ public class CliRunner implements Runnable {
 		description = "Query for points of the genome")
 	private String query;
 	
+	@Option(
+		names = { "-o", "--output" },
+		required = false,
+		description = "Output path for query")
+	private String output;
+	
 	@Override
 	public void run() {
-		// TODO Auto-generated method stub
-		
+		if (input != null && !input.isEmpty()) {
+			System.out.println("Initialize genomic data organization");
+		}
+		else if (query != null && !query.isEmpty()) {
+			System.out.println("Query genomic data for points");
+		}
+		else {
+			System.out.println("Please input arguments.");
+		}
 	}
 	
 	public static void main(String[] args) {
