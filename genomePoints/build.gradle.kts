@@ -19,6 +19,6 @@ tasks.withType<ShadowJar> {
 }
 
 application {
-    mainClassName = "query.genome.App"
+    mainClassName = "query.genome.CliRunner"
 }
 
