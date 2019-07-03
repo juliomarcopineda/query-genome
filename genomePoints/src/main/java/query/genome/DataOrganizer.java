@@ -5,6 +5,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 
+import com.google.gson.Gson;
 import com.opencsv.CSVParser;
 import com.opencsv.CSVParserBuilder;
 import com.opencsv.CSVReader;
@@ -19,11 +20,14 @@ public class DataOrganizer implements Runnable {
 		if (!Files.exists(inputPath)) {
 			// Handle error
 		}
+		
 		this.inputPath = inputPath;
 		this.dataDirectoryPath = Paths.get(dataDirectory);
 	}
 	
 	public void run() {
+		Gson gson = new Gson();
+		
 		try {
 			CSVReader reader = setupReader();
 			String[] record;
@@ -33,18 +37,19 @@ public class DataOrganizer implements Runnable {
 				int end = Integer.parseInt(record[2]);
 				double value = Double.parseDouble(record[3]);
 				
-				Point point = new Point();
-				point.setChromosome(chromosome);
-				point.setStart(start);
-				point.setEnd(end);
-				point.setValue(value);
+				Point point = createPoint(chromosome, start, end, value);
+				String jsonPath = resolvePath(chromosome, start, end, value);
 				
-				System.out.println(point);
+				gson.toJson(point, Files.newBufferedWriter(Paths.get(jsonPath)));
 			}
 		}
 		catch (IOException e) {
 			e.printStackTrace();
 		}
+	}
+	
+	private String resolvePath(String chromosome, int start, int end, double value) {
+		return null;
 	}
 	
 	private CSVReader setupReader() throws IOException {
@@ -54,5 +59,16 @@ public class DataOrganizer implements Runnable {
 						.withSkipLines(1)
 						.build();
 		return reader;
+	}
+	
+	private Point createPoint(String chromosome, int start, int end, double value) {
+		Point point = new Point();
+		
+		point.setChromosome(chromosome);
+		point.setStart(start);
+		point.setEnd(end);
+		point.setValue(value);
+		
+		return point;
 	}
 }
