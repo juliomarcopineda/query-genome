@@ -1,5 +1,6 @@
 package query.genome;
 
+import java.io.BufferedWriter;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -14,6 +15,8 @@ import com.opencsv.CSVReaderBuilder;
 public class DataOrganizer implements Runnable {
 	private Path inputPath;
 	private Path dataDirectoryPath;
+	
+	private static final int BIN_SIZE = 10000000;
 	
 	public DataOrganizer(String input, String dataDirectory) {
 		Path inputPath = Paths.get(input);
@@ -30,17 +33,21 @@ public class DataOrganizer implements Runnable {
 		
 		try {
 			CSVReader reader = setupReader();
+			
+			int count = 0;
 			String[] record;
 			while ((record = reader.readNext()) != null) {
-				String chromosome = record[0];
-				int start = Integer.parseInt(record[1]);
-				int end = Integer.parseInt(record[2]);
-				double value = Double.parseDouble(record[3]);
+				Point point = createPointFromRecord(record);
 				
-				Point point = createPoint(chromosome, start, end, value);
-				String jsonPath = resolvePath(chromosome, start, end, value);
+				Path jsonDir = resolvePath(point);
+				Files.createDirectories(jsonDir);
 				
-				gson.toJson(point, Files.newBufferedWriter(Paths.get(jsonPath)));
+				Path filePath = Paths.get(jsonDir.toString(),
+								point.getStart() + "-" + point.getEnd() + ".json");
+				
+				BufferedWriter writer = Files.newBufferedWriter(filePath);
+				gson.toJson(point, writer);
+				writer.close();
 			}
 		}
 		catch (IOException e) {
@@ -48,8 +55,11 @@ public class DataOrganizer implements Runnable {
 		}
 	}
 	
-	private String resolvePath(String chromosome, int start, int end, double value) {
-		return null;
+	private Path resolvePath(Point point) {
+		String chromosome = point.getChromosome();
+		String bin = String.valueOf(point.getStart() / BIN_SIZE * BIN_SIZE);
+		
+		return Paths.get(this.dataDirectoryPath.toString(), chromosome, bin);
 	}
 	
 	private CSVReader setupReader() throws IOException {
@@ -61,13 +71,13 @@ public class DataOrganizer implements Runnable {
 		return reader;
 	}
 	
-	private Point createPoint(String chromosome, int start, int end, double value) {
+	private Point createPointFromRecord(String[] record) {
 		Point point = new Point();
 		
-		point.setChromosome(chromosome);
-		point.setStart(start);
-		point.setEnd(end);
-		point.setValue(value);
+		point.setChromosome(record[0]);
+		point.setStart(Integer.parseInt(record[1]));
+		point.setEnd(Integer.parseInt(record[2]));
+		point.setValue(Double.parseDouble(record[3]));
 		
 		return point;
 	}

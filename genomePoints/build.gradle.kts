@@ -10,6 +10,7 @@ dependencies {
     compile("info.picocli:picocli:3.9.6")
     compile("com.opencsv:opencsv:4.6")
     compile("com.google.code.gson:gson:2.8.5")
+    compile("com.google.guava:guava:28.0-jre")
 }
 
 tasks.getByName<Zip>("shadowDistZip").archiveClassifier.set("shadow")
