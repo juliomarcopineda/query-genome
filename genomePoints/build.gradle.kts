@@ -8,6 +8,7 @@ plugins {
 
 dependencies {
     compile("info.picocli:picocli:3.9.6")
+    compile("com.opencsv:opencsv:4.6")
 }
 
 tasks.getByName<Zip>("shadowDistZip").archiveClassifier.set("shadow")

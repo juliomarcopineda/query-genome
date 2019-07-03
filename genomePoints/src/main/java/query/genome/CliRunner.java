@@ -32,7 +32,7 @@ public class CliRunner implements Runnable {
 	@Override
 	public void run() {
 		if (input != null && !input.isEmpty()) {
-			System.out.println("Initialize genomic data organization");
+			new DataOrganizer(input, dataDirectory).run();
 		}
 		else if (query != null && !query.isEmpty()) {
 			System.out.println("Query genomic data for points");
