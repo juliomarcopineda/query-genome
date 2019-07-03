@@ -33,7 +33,13 @@ public class DataOrganizer implements Runnable {
 				int end = Integer.parseInt(record[2]);
 				double value = Double.parseDouble(record[3]);
 				
-				System.out.println(chromosome + " " + start + " " + end + " " + value);
+				Point point = new Point();
+				point.setChromosome(chromosome);
+				point.setStart(start);
+				point.setEnd(end);
+				point.setValue(value);
+				
+				System.out.println(point);
 			}
 		}
 		catch (IOException e) {
