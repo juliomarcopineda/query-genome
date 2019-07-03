@@ -12,7 +12,7 @@ public class CliRunner implements Runnable {
 	private String input;
 	
 	@Option(
-		names = { "--data-dir" },
+		names = { "-d", "--data-dir" },
 		required = false,
 		description = "Directory where organized genomic is stored/to be stored")
 	private String dataDirectory = "data";
