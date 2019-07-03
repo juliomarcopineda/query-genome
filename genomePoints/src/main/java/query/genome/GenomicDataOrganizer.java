@@ -14,11 +14,11 @@ import com.opencsv.CSVParserBuilder;
 import com.opencsv.CSVReader;
 import com.opencsv.CSVReaderBuilder;
 
-public class DataOrganizer implements Runnable {
+public class GenomicDataOrganizer implements Runnable {
 	private Path inputPath;
 	private Path dataDirectoryPath;
 	
-	public DataOrganizer(String input, String dataDirectory) {
+	public GenomicDataOrganizer(String input, String dataDirectory) {
 		Path inputPath = Paths.get(input);
 		if (!Files.exists(inputPath)) {
 			System.out.println(input + " does not exist. Please input correct genomic data path.");
