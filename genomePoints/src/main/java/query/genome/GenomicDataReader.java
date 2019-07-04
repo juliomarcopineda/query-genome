@@ -24,7 +24,6 @@ import com.opencsv.CSVWriter;
  *
  */
 public class GenomicDataReader {
-	private Path dataDirectory;
 	private Path dataPath;
 	
 	private Map<String, Long> chromosomeIndex;
@@ -74,8 +73,7 @@ public class GenomicDataReader {
 			String[] headers = { "Chromosome", "Start", "End", "Value" };
 			writer.writeNext(headers);
 			
-			Path dataPath = Paths.get(this.dataDirectory.toString(), "data.dat");
-			try (RandomAccessFile reader = new RandomAccessFile(dataPath.toFile(), "r")) {
+			try (RandomAccessFile reader = new RandomAccessFile(this.dataPath.toFile(), "r")) {
 				for (Query query : queries) {
 					String queryChr = query.getChromosome();
 					
