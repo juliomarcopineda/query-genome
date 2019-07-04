@@ -55,17 +55,11 @@ public class GenomicDataReader {
 	 * 
 	 * Writes the results into a tab-delimited file at the given output path.
 	 * 
-	 * Throws IllegalArgumentExcpetion if the output path is not writable.
-	 * 
 	 * @param queryString
 	 * @param output
 	 */
 	public void queryPoints(String queryString, String output) {
 		Path outputPath = Paths.get(output);
-		if (!Files.isWritable(outputPath)) {
-			System.out.println(output + " is not writable");
-			throw new IllegalArgumentException();
-		}
 		
 		List<Query> queries = QueryParser.parse(queryString);
 		
