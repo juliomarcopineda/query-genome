@@ -1,14 +1,17 @@
 package query.genome;
 
+import java.io.BufferedWriter;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.RandomAccessFile;
+import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
+import com.opencsv.CSVWriter;
 
 public class GenomicDataReader {
 	private Path dataDirectory;
@@ -23,46 +26,43 @@ public class GenomicDataReader {
 		this.chromosomeIndex = setupChromosomeIndex();
 	}
 	
-	public List<Point> getPoints(String queryString) {
-		List<Point> points = new ArrayList<>();
+	public void queryPoints(String queryString, String output) {
+		Path outputPath = Paths.get(output);
+		// Files.isWritable(outputPath);
+		// TODO check writable output path and handle
 		
 		List<Query> queries = QueryParser.parse(queryString);
 		
-		Path dataPath = Paths.get(this.dataDirectory.toString(), "data.dat");
-		try (RandomAccessFile reader = new RandomAccessFile(dataPath.toFile(), "r")) {
-			for (Query query : queries) {
-				System.out.println(query);
-				String queryChr = query.getChromosome();
-				
-				// Go to byte position of chromosome
-				reader.seek(this.chromosomeIndex.get(queryChr));
-				
-				String pointChr;
-				while (!isEOF(reader) && (pointChr = reader.readUTF()).equals(queryChr)) {
-					int pointStart = reader.readInt();
-					int pointEnd = reader.readInt();
-					double pointValue = reader.readDouble();
+		try (CSVWriter writer = setupWriter(outputPath)) {
+			String[] headers = { "Chromosome", "Start", "End", "Value" };
+			writer.writeNext(headers);
+			
+			Path dataPath = Paths.get(this.dataDirectory.toString(), "data.dat");
+			try (RandomAccessFile reader = new RandomAccessFile(dataPath.toFile(), "r")) {
+				for (Query query : queries) {
+					String queryChr = query.getChromosome();
 					
-					if (pointStart >= query.getStart() && pointEnd <= query.getEnd()) {
-						Point point = new Point();
-						point.setChromosome(pointChr);
-						point.setStart(pointStart);
-						point.setEnd(pointEnd);
-						point.setValue(pointValue);
-						points.add(point);
-						System.out.println(point);
+					// Go to byte position of chromosome
+					reader.seek(this.chromosomeIndex.get(queryChr));
+					
+					String pointChr;
+					while (!isEOF(reader) && (pointChr = reader.readUTF()).equals(queryChr)) {
+						int pointStart = reader.readInt();
+						int pointEnd = reader.readInt();
+						double pointValue = reader.readDouble();
+						
+						if (pointStart >= query.getStart() && pointEnd <= query.getEnd()) {
+							String[] record = { pointChr, String.valueOf(pointStart),
+											String.valueOf(pointEnd), String.valueOf(pointValue) };
+							writer.writeNext(record);
+						}
 					}
 				}
 			}
 		}
-		catch (FileNotFoundException e) {
-			e.printStackTrace();
-		}
 		catch (IOException e) {
 			e.printStackTrace();
 		}
-		
-		return points;
 	}
 	
 	private Map<String, Long> setupChromosomeIndex() {
@@ -86,5 +86,12 @@ public class GenomicDataReader {
 	
 	private boolean isEOF(RandomAccessFile reader) throws IOException {
 		return reader.getFilePointer() >= reader.length();
+	}
+	
+	private CSVWriter setupWriter(Path outputPath) throws IOException {
+		BufferedWriter bufferedWriter = Files.newBufferedWriter(outputPath);
+		CSVWriter writer = new CSVWriter(bufferedWriter, '\t', CSVWriter.NO_QUOTE_CHARACTER,
+						CSVWriter.DEFAULT_ESCAPE_CHARACTER, CSVWriter.DEFAULT_LINE_END);
+		return writer;
 	}
 }

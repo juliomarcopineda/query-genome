@@ -1,7 +1,5 @@
 package query.genome;
 
-import java.util.List;
-
 import picocli.CommandLine;
 import picocli.CommandLine.Option;
 
@@ -38,8 +36,11 @@ public class CliRunner implements Runnable {
 		}
 		else if (queryString != null && !queryString.isEmpty()) {
 			GenomicDataReader dataReader = new GenomicDataReader(dataDirectory);
-			List<Point> points = dataReader.getPoints(queryString);
-			// points.forEach(System.out::println);
+			if (output == null || output.isEmpty()) {
+				output = queryString.replace(':', '_') + ".txt";
+			}
+			
+			dataReader.queryPoints(queryString, output);
 		}
 		else {
 			System.out.println("Please input arguments.");
