@@ -16,3 +16,4 @@ META-INF
 
 # Ignore data files
 .dat
+data/*
