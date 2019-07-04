@@ -13,3 +13,6 @@ bin/*
 # Ignore Gradle build output directory
 build
 META-INF
+
+# Ignore data files
+.dat
