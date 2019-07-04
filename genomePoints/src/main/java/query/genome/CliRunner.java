@@ -1,5 +1,7 @@
 package query.genome;
 
+import java.util.List;
+
 import picocli.CommandLine;
 import picocli.CommandLine.Option;
 
@@ -21,7 +23,7 @@ public class CliRunner implements Runnable {
 		names = { "-q", "--query" },
 		required = false,
 		description = "Query for points of the genome")
-	private String query;
+	private String queryString;
 	
 	@Option(
 		names = { "-o", "--output" },
@@ -34,8 +36,10 @@ public class CliRunner implements Runnable {
 		if (input != null && !input.isEmpty()) {
 			new GenomicDataOrganizer(input, dataDirectory).run();
 		}
-		else if (query != null && !query.isEmpty()) {
-			System.out.println("Query genomic data for points");
+		else if (queryString != null && !queryString.isEmpty()) {
+			GenomicDataReader dataReader = new GenomicDataReader(dataDirectory);
+			List<Point> points = dataReader.getPoints(queryString);
+			// points.forEach(System.out::println);
 		}
 		else {
 			System.out.println("Please input arguments.");
