@@ -3,10 +3,13 @@ Command-line interface for organizing genomic data into a binary file for fast r
 
 ## Setup: Build JAR file
 Building the JAR file to run the command-line interface is performed using gradle.
-`cd /query-genome/genomePoints`
-`../gradlew shadowJar`
 
-The build JAR file is located at `builds/libs` with the name `genome.jar`
+```
+cd /query-genome/genomePoints
+../gradlew shadowJar
+```
+
+The built JAR file is located at `builds/libs` with the name `genome.jar`
 
 ## Organize input data by serializing and indexing points of the genome
 ### Usage
