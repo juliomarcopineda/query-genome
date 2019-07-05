@@ -51,7 +51,7 @@ This command supports two types of query syntax:
 
 The program parses these two types of queries into a `Query` object where each `Query` represents one chromosome and a range from start to end position. Thus, the multiple  chromosome query is represented by a collection of `Query`.
 
-The program loads into memory the chromosome index file (defaults to `/data/index.dat/`) into a `Map`. Then, the serialized data file (defaults to `/data/data.dat`) is read using a `RandomAccessFile` such that the entire data file is not loaded into memory. 
+The program loads into memory the chromosome index file (defaults to `/data/index.dat`) into a `Map`. Then, the serialized data file (defaults to `/data/data.dat`) is read using a `RandomAccessFile` such that the entire data file is not loaded into memory. 
 
 For each `Query`, the program takes the byte buffer offset of the chromosome from the index and moves the `RandomAccessFile` pointer to this offset. Then, each point of the particular chromosome is deserialized, and if the point is within the query start and end positions, then it is written into a tab-delimited text file.
 The output file path defaults to `<input_query_string.txt>`
